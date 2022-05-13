@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ImageHelper;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,12 +43,17 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'post' => ['required', 'string']
+            'post' => ['required', 'string'],
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
+        $image = null;
+        if ($request->image) {
+            $image = ImageHelper::saveImageStorage($request->image, Post::IMAGE_FOLDER);
+        }
         Post::create([
             'user_id' => Auth::id(),
             'post' => $request->post,
+            'image' => $image,
         ]);
 
         return redirect()->route('post.index')->with('success', __('Create success'));

@@ -1,3 +1,8 @@
+@php
+use App\Helpers\ImageHelper;
+use App\Models\Post;
+@endphp
+
 @extends('layouts.app')
 
 @section('content')
@@ -10,7 +15,7 @@
                 </div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ $url }}">
+                    <form enctype="multipart/form-data" method="POST" action="{{ $url }}">
                         @csrf
 
                         <div class="row mb-3">
@@ -26,6 +31,23 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <label for="formFile" class="col-md-1 col-form-label">{{ __('Image') }}</label>
+                            <div class="col-md-11">
+                                <input accept="image/*" value="{{ old('image', $post->image ) }}" name="image" class="form-control @error('image') is-invalid @enderror" type="file" id="formFile">
+                            </div>
+                            @error('image')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+
+                        @if ($post->image)
+                        <div class="row mb-3">
+                            <img src="{{ ImageHelper::getImage($post->image, Post::IMAGE_FOLDER) }}" class="rounded mx-auto d-block img-thumbnail w-25" alt="...">
+                        </div>
+                        @endif
 
                         <div class="row mb-0">
                             <div class="text-md-end">
