@@ -9,8 +9,12 @@ class Post extends Model
 {
     use HasFactory;
 
+    const IMAGE_FOLDER = 'post';
+
     protected $fillable = [
-        'user_id', 'post'
+        'user_id',
+        'post',
+        'image'
     ];
 
     public function user() {
