@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Laravel\Passport\TokenRepository;
 use Laravel\Passport\RefreshTokenRepository;
+use App\Http\Controllers\Controller;
 
 class PassportController extends Controller
 {
@@ -18,7 +19,11 @@ class PassportController extends Controller
      */
     public function register(Request $request)
     {
-        $input = $request->only(['name', 'email', 'password']);
+        $input = $request->only([
+            'name',
+            'email',
+            'password'
+        ]);
 
         $validate_data = [
             'name' => 'required|string|min:4',
@@ -74,7 +79,10 @@ class PassportController extends Controller
 
         // authentication attempt
         if (auth()->attempt($input)) {
-            $token = auth()->user()->createToken('passport_token')->accessToken;
+            $token = auth()
+                ->user()
+                ->createToken('passport_token')
+                ->accessToken;
 
             return response()->json([
                 'success' => true,
@@ -110,7 +118,9 @@ class PassportController extends Controller
      */
     public function logout()
     {
-        $access_token = auth()->user()->token();
+        $access_token = auth()
+            ->user()
+            ->token();
 
         // logout from only current device
         $tokenRepository = app(TokenRepository::class);
