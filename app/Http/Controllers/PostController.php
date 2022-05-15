@@ -44,7 +44,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'post' => ['required', 'string'],
+            'post' => ['required', 'string', 'unique:posts'],
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
         $image = null;
@@ -68,7 +68,10 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        return view('post.show', [
+            'post' => $post
+        ]);
     }
 
     /**
@@ -96,7 +99,7 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'post' => ['required', 'string']
+            'post' => ['required', 'string', 'unique:posts,post,'.$id ]
         ]);
 
         $post = Post::findOrFail($id);
@@ -106,7 +109,14 @@ class PostController extends Controller
                 return redirect()->route('post.index')->with('danger', __('This is not your post'));
             }
 
+            $image = $post->image;
+            if ($request->image) {
+                $image = ImageHelper::saveImageStorage($request->image, Post::IMAGE_FOLDER);
+                ImageHelper::removeImage($post->image, Post::IMAGE_FOLDER);
+            }
+
             $post->post = $request->post;
+            $post->image = $image;
             $post->save();
 
             return redirect()->route('post.index')->with('success', __('Update success'));
