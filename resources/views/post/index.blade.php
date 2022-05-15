@@ -37,6 +37,7 @@
                                 <td>{{ $post->updated_at }}</td>
                                 <td>{{ $post->created_at }}</td>
                                 <td>
+                                    <a href="{{ route('post.show', $post->id) }}" class="btn btn-info btn-sm">{{ __('Show') }}</a>
                                     @can('post-user', $post)
                                     <a href="{{ route('post.edit', $post->id) }}" class="btn btn-primary btn-sm">{{ __('Edit') }}</a>
                                     <a href="{{ route('post.destroy', $post->id) }}" class="btn btn-danger btn-sm" onClick="return confirm('Delete This account?')">{{ __('Delete') }}</a>
