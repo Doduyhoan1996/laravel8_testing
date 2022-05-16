@@ -32,7 +32,11 @@
                             @foreach ($posts as $post)
                             <tr>
                                 <th scope="row">{{ $post->id }}</th>
-                                <td>{{ $post->user->name }}</td>
+                                <td>
+                                    {{ $post->user->name }}
+                                    <br>
+                                    {{ $post->user->email }}
+                                </td>
                                 <td>{{ $post->post }}</td>
                                 <td>{{ $post->updated_at }}</td>
                                 <td>{{ $post->created_at }}</td>
