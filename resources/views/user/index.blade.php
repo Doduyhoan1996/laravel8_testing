@@ -11,7 +11,9 @@
                             {{ __('List User') }}
                         </div>
                         <div>
+                            @can('check-admin-user')
                             <a href="{{ route('user.create') }}" class="btn btn-primary btn-sm">{{ __('Add') }}</a>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -24,6 +26,7 @@
                                 <th scope="col">{{ __('Name') }}</th>
                                 <th scope="col">{{ __('Email') }}</th>
                                 <th scope="col">{{ __('Email Verified At') }}</th>
+                                <th scope="col">{{ __('Is Admin') }}</th>
                                 <th scope="col">{{ __('Handle') }}</th>
                             </tr>
                         </thead>
@@ -34,9 +37,14 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->email_verified_at }}</td>
+                                <td>{{ $user->is_admin }}</td>
                                 <td>
+                                    @can('check-is-user', $user)
                                     <a href="{{ route('user.edit', $user->id) }}" class="btn btn-primary btn-sm">{{ __('Edit') }}</a>
+                                    @endcan
+                                    @can('check-admin-user')
                                     <a href="{{ route('user.destroy', $user->id) }}" class="btn btn-danger btn-sm" onClick="return confirm('Delete This account?')">{{ __('Delete') }}</a>
+                                    @endcan
                                 </td>
                             </tr>
                             @endforeach
