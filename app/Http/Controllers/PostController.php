@@ -105,9 +105,7 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
 
         if ($post) {
-            if(Gate::denies('post-user', $post)) {
-                return redirect()->route('post.index')->with('danger', __('This is not your post'));
-            }
+            Gate::authorize('post-user', $post);
 
             $image = $post->image;
             if ($request->image) {
@@ -136,9 +134,7 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
 
         if ($post) {
-            if(Gate::denies('post-user', $post)) {
-                return redirect()->route('post.index')->with('danger', __('This is not your post'));
-            }
+            Gate::authorize('post-user', $post);
 
             $post->delete();
             return redirect()->route('post.index')->with('success', __('Delete success'));
