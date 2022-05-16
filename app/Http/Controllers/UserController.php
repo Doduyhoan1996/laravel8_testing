@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -30,6 +31,7 @@ class UserController extends Controller
      */
     public function create()
     {
+        Gate::authorize('check-admin-user');
         return view('user.add', [
             'user' => new User()
         ]);
@@ -43,6 +45,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('check-admin-user');
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -80,6 +83,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
+        Gate::authorize('check-is-user', $user);
         return view('user.edit', [
             'user' => $user
         ]);
@@ -100,6 +104,7 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($id);
+        Gate::authorize('check-is-user', $user);
         $user->name = $request->name;
         if($request->password) {
             $user->password = Hash::make($request->password);
@@ -123,6 +128,7 @@ class UserController extends Controller
 
         $user = User::findOrFail($id);
         if ($user) {
+            Gate::authorize('check-admin-user');
             $user->delete();
             return redirect()->route('user.index')->with('success', __('Delete success'));
         }
