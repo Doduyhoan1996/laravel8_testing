@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Faker\Factory as Faker;
 
 class PostControllerTest extends TestCase
 {
@@ -31,14 +32,13 @@ class PostControllerTest extends TestCase
 
     public function setUp(): void {
         parent::setUp();
+        $this->faker = Faker::create();
         //setUp create User
         $this->user = User::factory()->create([
-            'email' => 'test@gmail.com',
             'password' => Hash::make('password'),
         ]);
 
         $this->other_user = User::factory()->create([
-            'email' => 'otheruser@gmail.com',
             'password' => Hash::make('password'),
         ]);
 
@@ -132,7 +132,7 @@ class PostControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $response = $this->post('/post/update/'. $this->post->id, [
-            'post' => 'test post other update',
+            'post' => $this->faker->paragraph(),
         ]);
         $response->assertStatus(403);
     }

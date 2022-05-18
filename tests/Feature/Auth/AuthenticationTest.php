@@ -20,7 +20,6 @@ class AuthenticationTest extends TestCase
     public function setUp(): void {
         parent::setUp();
         $this->user = User::factory()->create([
-            'email' => 'test@gmail.com',
             'password' => Hash::make('password'),
         ]);
     }

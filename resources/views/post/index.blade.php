@@ -25,7 +25,7 @@
                                 <th scope="col">{{ __('Post') }}</th>
                                 <th scope="col">{{ __('Updated At') }}</th>
                                 <th scope="col">{{ __('Created At') }}</th>
-                                <th scope="col">{{ __('Handle') }}</th>
+                                <th class="col-sm-2" scope="col">{{ __('Handle') }}</th>
                             </tr>
                         </thead>
                         <tbody>
