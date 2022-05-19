@@ -24,6 +24,6 @@ Route::post('login', [PassportController::class, 'login']);
 
 // put all api protected routes here
 Route::middleware('auth:api')->group(function () {
-    Route::post('user-detail', [PassportController::class, 'userDetail']);
+    Route::get('user-detail', [PassportController::class, 'userDetail']);
     Route::post('logout', [PassportController::class, 'logout']);
 });

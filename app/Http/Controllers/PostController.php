@@ -99,7 +99,8 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'post' => ['required', 'string', 'unique:posts,post,'.$id ]
+            'post' => ['required', 'string', 'unique:posts,post,'.$id ],
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $post = Post::findOrFail($id);
