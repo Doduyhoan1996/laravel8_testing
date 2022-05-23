@@ -54,7 +54,8 @@ class CreateUserCommandTest extends TestCase
             ->expectsQuestion('Choice is Admin', $input['is_admin'])
             ->doesntExpectOutput('Welcome '. $input['name'] .'. Your account created.')
             ->expectsOutput('User not created.')
-            ->assertExitCode(0);
+            ->assertExitCode(0)
+            ->assertFailed();
 
     }
 }

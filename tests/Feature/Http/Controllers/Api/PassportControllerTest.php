@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 class PassportControllerTest extends TestCase
 {
@@ -41,7 +42,7 @@ class PassportControllerTest extends TestCase
 
         $response
             ->assertStatus(200)
-            ->assertJson([
+            ->assertExactJson([
                 'success' => true,
                 'message' => 'User registered succesfully, Use Login method to receive token.'
             ]);
@@ -72,7 +73,7 @@ class PassportControllerTest extends TestCase
 
         $response
             ->assertStatus(401)
-            ->assertJson([
+            ->assertExactJson([
                 'success' => false,
                 'message' => 'User authentication failed.'
             ]);
@@ -100,18 +101,31 @@ class PassportControllerTest extends TestCase
         $this->actingAs($this->user, 'api');
         $response = $this->getJson('api/user-detail');
         $response->assertOk()
-            ->assertJson([
+            ->assertExactJson([
                 'success' => true,
                 'message' => 'Data fetched successfully.',
                 'data' => $this->user->toArray()
-            ]);
+            ])
+            ->assertJson(function (AssertableJson $json) {
+                $json
+                    ->has('data')
+                    ->has('message')
+                    ->where('success', true)
+                    ->where('message', 'Data fetched successfully.')
+                    ->whereType('data', 'array')
+                    ->where('data.id', $this->user->id)
+                    ->where('data.name', $this->user->name)
+                    ->where('data.email', $this->user->email)
+                    ->missing('data.password')
+                    ->etc();
+            });
         $this->assertEquals($this->user->toArray(), $response['data']);
     }
 
     public function testUserCanNotGetUserDetailOnApi()
     {
         $response = $this->getJson('api/user-detail');
-        $response->assertJson([
+        $response->assertExactJson([
             'message' => 'Unauthenticated.'
         ]);
         $this->assertGuest();
