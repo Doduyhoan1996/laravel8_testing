@@ -33,6 +33,7 @@ class PostControllerTest extends TestCase
     public function setUp(): void {
         parent::setUp();
         $this->faker = Faker::create();
+        Storage::fake('public');
         //setUp create User
         $this->user = User::factory()->create([
             'password' => Hash::make('password'),
@@ -68,7 +69,6 @@ class PostControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        Storage::fake('public');
         $fake_image = UploadedFile::fake()->image('post_image.jpg');
 
         $response = $this->post('/post/store', [
@@ -92,7 +92,6 @@ class PostControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        Storage::fake('public');
         $fake_image = UploadedFile::fake()->image('post_image.jpg')->size(3000);
 
         $response = $this->post('/post/store', [
@@ -119,7 +118,6 @@ class PostControllerTest extends TestCase
     {
         $this->actingAs($this->other_user);
 
-        Storage::fake('public');
         $fake_image = UploadedFile::fake()->image('image_update.jpg');
 
         $response = $this->post('/post/update/'. $this->post->id, [
