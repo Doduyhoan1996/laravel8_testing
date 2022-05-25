@@ -94,6 +94,7 @@ return [
         'laravel_testing' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),
+            // tạo CSDL (database\database.sqlite)
             'database' => database_path('database.sqlite'),
             'prefix' => '',
             'foreign_key_constraints' => true,
