@@ -7,9 +7,17 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Repositories\Eloquent\PostRepository;
 
 class PostController extends Controller
 {
+    protected $postRepository;
+
+    public function __construct(PostRepository $postRepository)
+    {
+        $this->postRepository = $postRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +25,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::paginate();
+        $posts = $this->postRepository->paginate();
         return view('post.index', [
             'posts' => $posts
         ]);
@@ -51,7 +59,7 @@ class PostController extends Controller
         if ($request->image) {
             $image = ImageHelper::saveImageStorage($request->image, Post::IMAGE_FOLDER);
         }
-        Post::create([
+        $this->postRepository->create([
             'user_id' => Auth::id(),
             'post' => $request->post,
             'image' => $image,
@@ -68,7 +76,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::findOrFail($id);
+        $post = $this->postRepository->find($id);
         return view('post.show', [
             'post' => $post
         ]);
@@ -82,7 +90,7 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::findOrFail($id);
+        $post = $this->postRepository->find($id);
         Gate::authorize('post-user', $post);
         return view('post.edit', [
             'post' => $post
@@ -103,7 +111,7 @@ class PostController extends Controller
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $post = Post::findOrFail($id);
+        $post = $this->postRepository->find($id);
 
         if ($post) {
             Gate::authorize('post-user', $post);
@@ -114,9 +122,10 @@ class PostController extends Controller
                 ImageHelper::removeImage($post->image, Post::IMAGE_FOLDER);
             }
 
-            $post->post = $request->post;
-            $post->image = $image;
-            $post->save();
+            $this->postRepository->update([
+                'post' => $request->post,
+                'image' => $image
+            ], $id);
 
             return redirect()->route('post.index')->with('success', __('Update success'));
         }
@@ -132,7 +141,7 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        $post = Post::findOrFail($id);
+        $post = $this->postRepository->find($id);
 
         if ($post) {
             Gate::authorize('post-user', $post);
