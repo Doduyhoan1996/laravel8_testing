@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Faker\Factory as Faker;
 
 class PostControllerTest extends TestCase
 {
@@ -31,14 +32,14 @@ class PostControllerTest extends TestCase
 
     public function setUp(): void {
         parent::setUp();
+        $this->faker = Faker::create();
+        Storage::fake('public');
         //setUp create User
         $this->user = User::factory()->create([
-            'email' => 'test@gmail.com',
             'password' => Hash::make('password'),
         ]);
 
         $this->other_user = User::factory()->create([
-            'email' => 'otheruser@gmail.com',
             'password' => Hash::make('password'),
         ]);
 
@@ -68,7 +69,6 @@ class PostControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        Storage::fake('public');
         $fake_image = UploadedFile::fake()->image('post_image.jpg');
 
         $response = $this->post('/post/store', [
@@ -88,6 +88,24 @@ class PostControllerTest extends TestCase
             ->assertSessionHas('success', __('Create success'));
     }
 
+    public function testUserCanNotCreatePost()
+    {
+        $this->actingAs($this->user);
+
+        $fake_image = UploadedFile::fake()->image('post_image.jpg')->size(3000);
+
+        $response = $this->post('/post/store', [
+            'post' => null,
+            'image' => $fake_image,
+        ]);
+
+        $response->assertStatus(302)
+            ->assertSessionHasErrors([
+                'post' => 'The post field is required.',
+                'image' => 'The image may not be greater than 2048 kilobytes.',
+            ]);
+    }
+
     public function testUserCanEditPost()
     {
         $this->actingAs($this->other_user);
@@ -100,7 +118,6 @@ class PostControllerTest extends TestCase
     {
         $this->actingAs($this->other_user);
 
-        Storage::fake('public');
         $fake_image = UploadedFile::fake()->image('image_update.jpg');
 
         $response = $this->post('/post/update/'. $this->post->id, [
@@ -132,7 +149,7 @@ class PostControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $response = $this->post('/post/update/'. $this->post->id, [
-            'post' => 'test post other update',
+            'post' => $this->faker->paragraph(),
         ]);
         $response->assertStatus(403);
     }

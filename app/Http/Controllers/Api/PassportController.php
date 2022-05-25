@@ -27,7 +27,7 @@ class PassportController extends Controller
 
         $validate_data = [
             'name' => 'required|string|min:4',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
         ];
 
@@ -38,7 +38,7 @@ class PassportController extends Controller
                 'success' => false,
                 'message' => 'Please see errors parameter for all errors.',
                 'errors' => $validator->errors()
-            ]);
+            ], 422);
         }
 
         $user = User::create([
@@ -74,7 +74,7 @@ class PassportController extends Controller
                 'success' => false,
                 'message' => 'Please see errors parameter for all errors.',
                 'errors' => $validator->errors()
-            ]);
+            ], 422);
         }
 
         // authentication attempt

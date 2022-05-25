@@ -5,6 +5,7 @@ namespace Tests\Feature\Auth;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Faker\Factory as Faker;
 
 class RegistrationTest extends TestCase
 {
@@ -19,9 +20,10 @@ class RegistrationTest extends TestCase
 
     public function testNewUsersCanRegister()
     {
+        $this->faker = Faker::create();
         $response = $this->post('/register', [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' =>  $this->faker->name,
+            'email' =>  $this->faker->email,
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
