@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Test CreateUserCommand
+ */
+
 namespace Tests\Unit\Commands;
 
 use App\Models\User;
@@ -11,7 +15,7 @@ class CreateUserCommandTest extends TestCase
     use RefreshDatabase;
     /**
      * Test a console command.
-     *
+     * Test case tạo chạy command thành công
      * @return void
      */
     public function testCommandCreateUserSuccess()
@@ -38,6 +42,7 @@ class CreateUserCommandTest extends TestCase
         $this->assertEquals($input['is_admin'], $input['is_admin']);
     }
 
+    //Test case tạo chạy command không thành công
     public function testCommandCreateUserFails()
     {
         $input = [

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Test Controller PostController
+ */
+
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Post;
@@ -33,6 +37,8 @@ class PostControllerTest extends TestCase
     public function setUp(): void {
         parent::setUp();
         $this->faker = Faker::create();
+
+        //tạo Storage fake
         Storage::fake('public');
         //setUp create User
         $this->user = User::factory()->create([
@@ -49,6 +55,7 @@ class PostControllerTest extends TestCase
         ]);
     }
 
+    // test case không thể truy cập post index khi chưa đăng nhập
     public function testCanNotAccessPostIndexPageWithoutAuthenticate()
     {
         $response = $this->get('post');
@@ -56,19 +63,23 @@ class PostControllerTest extends TestCase
         $response->assertRedirect('/login');
     }
 
+    // test case có thể truy cập post index khi đã đăng nhập
     public function testPostsIndexPageIsRendered()
     {
         //login guard with $user
         $this->actingAs($this->user);
         $response = $this->get('post');
         $response->assertStatus(200)
+            //assertSee thấy text "post fake" là post đã được tạo ở setUp()
             ->assertSee('post fake');
     }
 
+    // test case có thể tạo post
     public function testUserCanCreatePost()
     {
         $this->actingAs($this->user);
 
+        // Tạo fake image
         $fake_image = UploadedFile::fake()->image('post_image.jpg');
 
         $response = $this->post('/post/store', [
@@ -76,11 +87,17 @@ class PostControllerTest extends TestCase
             'image' => $fake_image,
         ]);
 
+        // Tìm kiếm post vừa được tạo
         $post = Post::where('user_id', $this->user->id)->first();
 
+        // khẳng định thông tin post vừa tạo giống với trong CSDL
         $this->assertEquals($this->user->id, $post->user_id);
         $this->assertEquals('test post create', $post->post);
+
+        // khẳng định $post->user có đúng là Instance của User::class
         $this->assertInstanceOf(User::class, $post->user);
+
+        // khẳng định image đã được lưu vào Storage
         Storage::disk('public')->assertExists( Post::IMAGE_FOLDER .'/' . $post->image);
 
         $response->assertStatus(302)
@@ -88,10 +105,12 @@ class PostControllerTest extends TestCase
             ->assertSessionHas('success', __('Create success'));
     }
 
+    // test case user không thể tạo post
     public function testUserCanNotCreatePost()
     {
         $this->actingAs($this->user);
 
+        // Tạo fake image với size làm 3000 kilobytes
         $fake_image = UploadedFile::fake()->image('post_image.jpg')->size(3000);
 
         $response = $this->post('/post/store', [
@@ -100,12 +119,14 @@ class PostControllerTest extends TestCase
         ]);
 
         $response->assertStatus(302)
+            //khẳng định tồn tại message lỗi được trả về khi nhập sai thông tin
             ->assertSessionHasErrors([
                 'post' => 'The post field is required.',
                 'image' => 'The image may not be greater than 2048 kilobytes.',
             ]);
     }
 
+    // test case user có thể truy cập post edit khi đã đăng nhập
     public function testUserCanEditPost()
     {
         $this->actingAs($this->other_user);
@@ -114,6 +135,7 @@ class PostControllerTest extends TestCase
             ->assertSee('post fake');
     }
 
+    // test case user có sửa post do mình tạo
     public function testUserCanUpdateMyPost()
     {
         $this->actingAs($this->other_user);
@@ -138,6 +160,7 @@ class PostControllerTest extends TestCase
             ->assertSessionHas('success', __('Update success'));
     }
 
+    // test case user không thể truy cập post edit của người khác
     public function testUserCanNotEditOtherPost()
     {
         $this->actingAs($this->user);
@@ -145,6 +168,7 @@ class PostControllerTest extends TestCase
         $response->assertStatus(403);
     }
 
+    // test case user không thể sửa post của người khác
     public function testUserCanNotUpdateOtherPost()
     {
         $this->actingAs($this->user);
@@ -154,6 +178,7 @@ class PostControllerTest extends TestCase
         $response->assertStatus(403);
     }
 
+    // test case user không thể xóa post của người khác
     public function testUserCanNotDestroyOtherPost()
     {
         $this->actingAs($this->user);
@@ -161,6 +186,7 @@ class PostControllerTest extends TestCase
         $response->assertStatus(403);
     }
 
+    // test case user có thể xóa post của mình
     public function testUserCanDestroyOtherPost()
     {
         $this->actingAs($this->other_user);

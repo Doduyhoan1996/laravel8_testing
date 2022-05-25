@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Test Database
+ */
 namespace Tests\Unit\Commands;
 
 use App\Models\Post;
@@ -12,6 +15,7 @@ class DatabaseTest extends TestCase
 {
     use RefreshDatabase;
 
+    // Test case bảng user không có dữ liệu
     public function testUsersTableMissingData()
     {
         $this->assertDatabaseMissing('users', [
@@ -20,6 +24,7 @@ class DatabaseTest extends TestCase
         $this->assertDatabaseCount('users', 0);
     }
 
+    // Test case bảng user có dữ liệu sau khi chạy seed
     public function testUsersTableHasDataIfSeedersWorks()
     {
         // Run UsersTableSeeder seeder...
@@ -33,11 +38,13 @@ class DatabaseTest extends TestCase
         $this->assertDatabaseCount('users', 1);
     }
 
+    // Test case bảng post không có dữ liệu
     public function testPostsTableMissingData()
     {
         $this->assertDatabaseCount('posts', 0);
     }
 
+    // Test case bảng post có dữ liệu sau khi chạy seed
     public function testPostsTableHasDataIfSeedersWorks()
     {
         // Run the DatabaseSeeder...
