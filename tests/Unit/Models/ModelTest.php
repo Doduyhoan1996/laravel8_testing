@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Test ModelTest
+ */
+
 namespace Tests\Unit\Model;
 
 use Tests\TestCase;
@@ -13,6 +17,7 @@ class ModelTest extends TestCase
 {
     use RefreshDatabase;
 
+    // Test Relationship HasMany
     public function testUserHasManyPosts()
     {
         $user = User::factory()->create();
@@ -21,6 +26,7 @@ class ModelTest extends TestCase
         $this->assertEquals('user_id', $user->posts()->getForeignKeyName());
     }
 
+    // Test Relationship BeLongsTo
     public function testPostBeLongsToUser() {
         $user = User::factory()->create();
         $post = Post::factory()->create(['user_id' => $user->id]);

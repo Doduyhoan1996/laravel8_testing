@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Test tính năng PasswordConfirmation
+ */
+
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
@@ -23,6 +27,7 @@ class PasswordConfirmationTest extends TestCase
         ]);
     }
 
+    // test case có thể render view Confirm Password thông qua HTTP request
     public function testConfirmPasswordScreenCanBeRendered()
     {
         $response = $this->actingAs($this->user)->get('/password/confirm');
@@ -30,6 +35,7 @@ class PasswordConfirmationTest extends TestCase
         $response->assertStatus(200);
     }
 
+    // test case có thể Confirm Password thông qua HTTP request
     public function testPasswordCanBeConfirmed()
     {
         $response = $this->actingAs($this->user)->post('/password/confirm', [
@@ -40,6 +46,7 @@ class PasswordConfirmationTest extends TestCase
         $response->assertSessionHasNoErrors();
     }
 
+    // test case Confirm Password thông qua HTTP request
     public function testPasswordIsNotConfirmedWithInvalidPassword()
     {
         $response = $this->actingAs($this->user)->post('/password/confirm', [

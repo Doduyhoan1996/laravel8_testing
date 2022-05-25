@@ -4,6 +4,7 @@
          bootstrap="vendor/autoload.php"
          colors="true"
 >
+    <!--  khai báo directory testsuites -->
     <testsuites>
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
@@ -23,10 +24,12 @@
             <directory suffix=".php">./app</directory>
         </include>
     </coverage>
+    <!-- Định nghĩa môi trường test  -->
     <php>
         <server name="APP_ENV" value="testing"/>
         <server name="BCRYPT_ROUNDS" value="4"/>
         <server name="CACHE_DRIVER" value="array"/>
+        <!-- Định nghĩa database trong môi trường test (vào config/database.php xem cấu hình của laravel_testing)  -->
         <server name="DB_CONNECTION" value="laravel_testing"/>
         <!-- <server name="DB_DATABASE" value=":memory:"/> -->
         <server name="MAIL_MAILER" value="array"/>

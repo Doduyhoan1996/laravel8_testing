@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Test tính năng PasswordReset
+ */
+
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
@@ -22,6 +26,7 @@ class PasswordResetTest extends TestCase
         $this->user = User::factory()->create();
     }
 
+    // test case có thể render view ResetPassword (màn hình lấy lại mật khẩu)
     public function testResetPasswordLinkScreenCanBeRendered()
     {
         $response = $this->get('/password/reset');
@@ -29,15 +34,19 @@ class PasswordResetTest extends TestCase
         $response->assertStatus(200);
     }
 
+    // test case có gửi Notification ResetPassword sau khi submit email
     public function testResetPasswordLinkCanBeRequested()
     {
+        //fake Notification
         Notification::fake();
 
         $this->post('/password/email', ['email' => $this->user->email]);
 
+        //assertSentTo khẳng định Notification ResetPassword đã được gửi cho user
         Notification::assertSentTo($this->user, ResetPassword::class);
     }
 
+    // test case có thể render view màn hình nhập mật khẩu mới
     public function testResetPasswordScreenCanBeRendered()
     {
         Notification::fake();
@@ -53,6 +62,7 @@ class PasswordResetTest extends TestCase
         });
     }
 
+    // test case có thể thay đổi mật khẩu trên view màn hình nhập mật khẩu mới
     public function testPasswordCanBeResetWithValidToken()
     {
         Notification::fake();

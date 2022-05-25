@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Test chức năng post trên trình duyệt
+ */
+
 namespace Tests\Browser;
 
 use App\Models\User;
@@ -22,11 +26,17 @@ class PostTest extends DuskTestCase
     */
     protected $post;
 
+    /**
+     * Khởi tạo các thuộc tính sẽ sử dụng nhiều khi trước khi bắt đầu test
+     */
     public function setUp(): void {
+        // gọi lại setUp của parent
         parent::setUp();
 
+        // Tạo dữ liệu User
         $this->user = User::factory()->create();
 
+        // Tạo dữ liệu Post
         $this->post = Post::create([
             'post' => 'Post fake',
             'user_id' => $this->user->id
@@ -34,18 +44,20 @@ class PostTest extends DuskTestCase
     }
 
     /**
-     *
+     * Test Case tạo mới post trên trình duyệt
      * @return void
      */
     public function testUserCanCreatePostInPage()
     {
         $this->browse(function ($browser) {
             $browser
+                // Login với user đã được tạo
                 ->loginAs($this->user)
                 ->visit(route('post.create'))
                 ->assertSee(__('Add'))
                 ->type('post', 'Test add post')
-                // ->attach('image', __DIR__.'/images/test.jpg')
+                // attach file vào input
+                ->attach('image', __DIR__.'/images/test.jpg')
                 ->press(__('Add'))
                 ->assertPathIs('/post')
                 ->assertSee(__('Create success'))
@@ -56,7 +68,7 @@ class PostTest extends DuskTestCase
     }
 
     /**
-     *
+     * Test Case sửa post trên trình duyệt
      * @return void
      */
     public function testUserCanUpdatePostInPage()
@@ -66,12 +78,19 @@ class PostTest extends DuskTestCase
                 ->loginAs($this->user)
                 ->visit(route('post.index'))
                 ->assertSee(__('List Post'))
+                // Sử lý thao tác với các element trên table
                 ->with('table', function ($table) {
                     $table
+                        // assertSee khẳng định thấy id của post trên table
                         ->assertSee($this->post->id)
+                        // assertSee khẳng định thấy post trên table
                         ->assertSee($this->post->post)
+                        // click vào link với text __('Edit') trên table
                         ->clickLink(__('Edit'));
-                })->assertUrlIs(route('post.edit', $this->post->id))
+                })
+                // assertUrlIs khẳng định đường dẫn hiện tại là:
+                ->assertUrlIs(route('post.edit', $this->post->id))
+                // Nhập giá trị cho input
                 ->type('post', 'Post edit')
                 ->press(__('Edit'))
                 ->assertPathIs('/post')
@@ -82,7 +101,7 @@ class PostTest extends DuskTestCase
     }
 
     /**
-     *
+     * Test Case xóa post trên trình duyệt
      * @return void
      */
     public function testUserCanDeletePostInPage()
@@ -94,15 +113,22 @@ class PostTest extends DuskTestCase
                 ->assertSee(__('List Post'))
                 ->with('table', function ($table) {
                     $table
+                        // assertSee khẳng định thấy id của post trên table
                         ->assertSee($this->post->id)
+                        // assertSee khẳng định thấy post trên table
                         ->assertSee($this->post->post)
                         ->clickLink(__('Delete'))
+                        // khẳng định thấy Dialog mở ra với text "Delete This post?"
                         ->assertDialogOpened('Delete This post?')
-                        ->acceptDialog(__('OK'));
+                        // Chấp nhận nút "OK" trên Dialog
+                        ->acceptDialog('OK');
                 })
                 ->assertPathIs('/post')
+                // assertSee khẳng định thấy text __('Delete success')
                 ->assertSee(__('Delete success'))
+                // assertDontSee khẳng định không thấy id của post trên trình duyệt
                 ->assertDontSee($this->post->id)
+                // assertDontSee khẳng định không thấy post trên trình duyệt
                 ->assertDontSee($this->post->post);
         });
     }
