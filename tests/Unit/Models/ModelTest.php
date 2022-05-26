@@ -4,7 +4,7 @@
  * Test ModelTest
  */
 
-namespace Tests\Unit\Model;
+namespace Tests\Unit\Models;
 
 use Tests\TestCase;
 use App\Models\User;

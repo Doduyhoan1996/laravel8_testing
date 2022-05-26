@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Test Controller PassportController
+ */
+
 namespace Tests\Feature\Http\Controllers\Api;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;

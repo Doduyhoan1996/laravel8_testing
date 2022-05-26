@@ -4,7 +4,7 @@
  * Test ImageHepler
  */
 
-namespace Tests\Unit;
+namespace Tests\Unit\Helpers;
 
 use Tests\TestCase;
 use App\Helpers\ImageHelper;
