@@ -3,7 +3,7 @@
 /**
  * Test Database
  */
-namespace Tests\Unit\Commands;
+namespace Tests\Unit\Database;
 
 use App\Models\Post;
 use App\Models\User;
