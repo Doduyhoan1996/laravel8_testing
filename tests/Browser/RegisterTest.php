@@ -41,7 +41,7 @@ class RegisterTest extends DuskTestCase
     public function testUserRegisterFailOnRegisterPage()
     {
         $user = User::factory()->create() ;
-        $this->browse(function ($browser) use ($user) {
+        $this->browse(function (Browser $browser) use ($user) {
             $browser->visit('/register')
                     ->assertSee(__('Register'))
                     ->type('name', $user->name)
@@ -60,7 +60,7 @@ class RegisterTest extends DuskTestCase
      */
     public function testUserCanRegisterOnRegisterPage()
     {
-        $this->browse(function ($browser) {
+        $this->browse(function (Browser $browser) {
             $browser->visit('/register')
                     ->assertSee(__('Register'))
                     ->type('name', $this->user['name'])
