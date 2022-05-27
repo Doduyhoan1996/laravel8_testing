@@ -84,4 +84,28 @@ class PasswordResetTest extends TestCase
             return true;
         });
     }
+
+    // test case nhập sai password confirmation trên view màn hình nhập mật khẩu mới
+    public function testPasswordCanNotResetWithValidToken()
+    {
+        Notification::fake();
+
+        $user = $this->user;
+
+        $this->post('/password/email', ['email' => $user->email]);
+
+        Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+            $response = $this->post('/password/reset', [
+                'token' => $notification->token,
+                'email' => $user->email,
+                'password' => '123456789',
+                'password_confirmation' => 'new_password',
+            ]);
+            $response->assertSessionHasErrors();
+
+            return true;
+
+        });
+    }
 }
+

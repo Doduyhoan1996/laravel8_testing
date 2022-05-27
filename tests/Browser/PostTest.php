@@ -49,7 +49,7 @@ class PostTest extends DuskTestCase
      */
     public function testUserCanCreatePostInPage()
     {
-        $this->browse(function ($browser) {
+        $this->browse(function (Browser $browser) {
             $browser
                 // Login với user đã được tạo
                 ->loginAs($this->user)
@@ -73,7 +73,7 @@ class PostTest extends DuskTestCase
      */
     public function testUserCanUpdatePostInPage()
     {
-        $this->browse(function ($browser) {
+        $this->browse(function (Browser $browser) {
             $browser
                 ->loginAs($this->user)
                 ->visit(route('post.index'))
@@ -106,7 +106,7 @@ class PostTest extends DuskTestCase
      */
     public function testUserCanDeletePostInPage()
     {
-        $this->browse(function ($browser) {
+        $this->browse(function (Browser $browser) {
             $browser
                 ->loginAs($this->user)
                 ->visit(route('post.index'))

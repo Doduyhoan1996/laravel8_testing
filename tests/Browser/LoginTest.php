@@ -27,7 +27,7 @@ class LoginTest extends DuskTestCase
     public function testUserLoginFailOnLoginPage()
     {
         //Khởi tạo browse test
-        $this->browse(function ($browser) {
+        $this->browse(function (Browser $browser) {
             // visit đi tới màn hình login trên trình duyệt
             $browser->visit('/login')
                     // assertSee khẳng định thấy text "Login" trên trình duyệt
@@ -58,7 +58,7 @@ class LoginTest extends DuskTestCase
             'password' => Hash::make('password'),
         ]);
 
-        $this->browse(function ($browser) use ($user) {
+        $this->browse(function (Browser $browser) use ($user) {
             $browser->visit('/login')
                     ->assertSee(__('Login'))
                     ->type('email', $user->email)
